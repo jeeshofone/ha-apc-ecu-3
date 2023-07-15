@@ -1,0 +1,12 @@
+alias: get the solar data
+description: ""
+trigger:
+  - platform: time_pattern
+    minutes: "*"
+    seconds: "0"
+    hours: "*"
+condition: []
+action:
+  - service: shell_command.convert_solar_data
+    data: {}
+mode: single

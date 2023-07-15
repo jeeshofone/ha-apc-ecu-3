@@ -1,0 +1,54 @@
+shell_command:
+  convert_solar_data: python solarhtml2json.py
+
+sensor:
+  - platform: rest
+    name: "Solar Panel 01"
+    resource: http://homeassistant.local:8123/local/power_data.json
+    value_template: '{{ value_json["404000058737-A"][0] }}'
+    unit_of_measurement: "W"
+  - platform: rest
+    name: "Solar Panel 02"
+    resource: http://homeassistant.local:8123/local/power_data.json
+    value_template: '{{ value_json["404000060766-A"][0] }}'
+    unit_of_measurement: "W"
+  - platform: rest
+    name: "Solar Panel 03"
+    resource: http://homeassistant.local:8123/local/power_data.json
+    value_template: '{{ value_json["404000060391-A"][0] }}'
+    unit_of_measurement: "W"
+  - platform: rest
+    name: "Solar Panel 04"
+    resource: http://homeassistant.local:8123/local/power_data.json
+    value_template: '{{ value_json["404000060520-A"][0] }}'
+    unit_of_measurement: "W"
+  - platform: rest
+    name: "Solar Panel 05"
+    resource: http://homeassistant.local:8123/local/power_data.json
+    value_template: '{{ value_json["404000060206-A"][0] }}'
+    unit_of_measurement: "W"
+  - platform: rest
+    name: "Solar Panel 06"
+    resource: http://homeassistant.local:8123/local/power_data.json
+    value_template: '{{ value_json["404000060206-B"][0] }}'
+    unit_of_measurement: "W"
+  - platform: rest
+    name: "Solar Panel 07"
+    resource: http://homeassistant.local:8123/local/power_data.json
+    value_template: '{{ value_json["404000060520-B"][0] }}'
+    unit_of_measurement: "W"
+  - platform: rest
+    name: "Solar Panel 08"
+    resource: http://homeassistant.local:8123/local/power_data.json
+    value_template: '{{ value_json["404000060391-B"][0] }}'
+    unit_of_measurement: "W"
+  - platform: rest
+    name: "Solar Panel 09"
+    resource: http://homeassistant.local:8123/local/power_data.json
+    value_template: '{{ value_json["404000060766-B"][0] }}'
+    unit_of_measurement: "W"
+  - platform: rest
+    name: "Solar Panel 10"
+    resource: http://homeassistant.local:8123/local/power_data.json
+    value_template: '{{ value_json["404000058737-B"][0] }}'
+    unit_of_measurement: "W"
