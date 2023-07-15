@@ -1,6 +1,6 @@
 # Home Assistant APC ECU-3 Data Reader
 
-This custom component for Home Assistant fetches data from an APC ECU-3 device and integrates it into your Home Assistant instance. It's currently a work in progress, but functional.
+This custom component for Home Assistant fetches data from an APC ECU-3 device and integrates it into your Home Assistant instance. It's currently a work in progress, but functional. You can find more information in this blog post: https://www.123cloud.st/p/the-unexpectedly-direct-path-to-building
 
 ## Requirements
 
