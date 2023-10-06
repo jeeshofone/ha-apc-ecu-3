@@ -4,7 +4,7 @@ from datetime import datetime
 import json
 
 def get_power_data():
-    url = 'http://192.168.86.69/cgi-bin/parameters'
+    url = 'http://IP-OF-ECU-3/cgi-bin/parameters'
     r = requests.get(url)
     
     if r.status_code != 200:
