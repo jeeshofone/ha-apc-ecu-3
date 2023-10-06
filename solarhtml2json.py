@@ -49,7 +49,7 @@ def get_power_data():
     # For missing panels (offline over night etc) fill in the latest timestamp
     # found. If all are offline, fill in the current time.
     if latest_time == '0':
-        latest_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        latest_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     for pannel in power_data:
         if power_data[pannel][4] == '0':
             power_data[pannel][4] = latest_time
