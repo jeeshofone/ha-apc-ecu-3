@@ -25,13 +25,25 @@ def generate_yaml():
             inverter_ids.append(columns[0].text)
 
     with open('config_part.yaml', 'w') as f:
+        f.write(
+            f'rest:\n'
+            f'  - resource: http://homeassistant.local:8123/local/power_data.json\n'
+            f'    sensor:\n'
+        )
         for i, id in enumerate(inverter_ids, start=1):
             f.write(
-                f'- platform: rest\n'
-                f'  name: "Solar Panel {str(i).zfill(2)}"\n'
-                f'  resource: http://homeassistant.local:8123/local/power_data.json\n'
-                f'  value_template: \'{{{{ value_json["{id}"][0] }}}}\'\n'
-                f'  unit_of_measurement: "W"\n\n'
+                f'      - name: "Solar Panel {str(i).zfill(2)} power"\n'
+                f'        value_template: \'{{{{ value_json["{id}"][0] }}}}\'\n'
+                f'        unit_of_measurement: "W"\n\n'
+                f'      - name: "Solar Panel {str(i).zfill(2)} grid frequency"\n'
+                f'        value_template: \'{{{{ value_json["{id}"][1] }}}}\'\n'
+                f'        unit_of_measurement: "Hz"\n\n'
+                f'      - name: "Solar Panel {str(i).zfill(2)} grid voltage"\n'
+                f'        value_template: \'{{{{ value_json["{id}"][2] }}}}\'\n'
+                f'        unit_of_measurement: "V"\n\n'
+                f'      - name: "Solar Panel {str(i).zfill(2)} temperature"\n'
+                f'        value_template: \'{{{{ value_json["{id}"][3] }}}}\'\n'
+                f'        unit_of_measurement: "°C"\n\n'
             )
 
 generate_yaml()
