@@ -19,10 +19,14 @@ def generate_yaml():
     rows = table.find_all('tr')
     inverter_ids = []
 
-    for row in rows:
+    for i, row in enumerate(rows):
         columns = row.find_all('td')
         if len(columns) == 6:
+            if i == 0:
+                continue
             inverter_ids.append(columns[0].text)
+
+    print(f'Found {len(inverter_ids)} inverters')
 
     with open('config_part.yaml', 'w') as f:
         f.write(
