@@ -10,7 +10,7 @@ This custom component for Home Assistant fetches data from an APC ECU-3 device a
 
 ## Setup
 
-1. **Script File:** Copy the `solarhtml2json.py` and `generate_config.py` files to your Home Assistant configuration directory.
+1. **Script File:** Copy the `solarhtml2json.py` and `generate_config.py` files to your Home Assistant configuration directory. For this I used the File Editor add-on in Home Assistant. The path to the configuration directory is `/config` by default.
 
 2. **Generate Configuration:** Run the `populate-configuration.py` script to automatically create a `config_part.yaml` file with the sensor configuration for each of your inverters. Ensure that you replace `IP-OF-ECU-3` in the script with the actual IP address of your APC ECU-3 device.
 
