@@ -10,14 +10,28 @@ This custom component for Home Assistant fetches data from an APC ECU-3 device a
 
 ## Setup
 
-1. **Script File:** Copy the `solarhtml2json.py` and `generate_config.py` files to your Home Assistant configuration directory. For this I used the File Editor add-on in Home Assistant. The path to the configuration directory is `/config` by default.
+1. **Script Preparation:**
+   - Copy the \`solarhtml2json.py\` and \`generate_config.py\` files to your Home Assistant configuration directory. This can be efficiently done using the File Editor add-on. The configuration directory's default path is \`/config\`.
 
-2. **Generate Configuration:** Run the `populate-configuration.py` script to automatically create a `config_part.yaml` file with the sensor configuration for each of your inverters. Ensure that you replace `IP-OF-ECU-3` in the script with the actual IP address of your APC ECU-3 device.
+2. **Generate Configuration Using Local Python:**
+   - Running \`populate-configuration.py\` requires Python and certain dependencies. Install Python locally on your PC. Then, install needed libraries by running \`pip install requests beautifulsoup4\`.
+   - Run \`populate-configuration.py\` locally after replacing \`IP-OF-ECU-3\` in the script with the actual IP of your APC ECU-3 device to generate a \`config_part.yaml\` file.
 
-3. **Configuration:** Add the contents of the generated `config_part.yaml` file to your `configuration.yaml` file in Home Assistant.
+3. **Integration into Home Assistant:**
+   - Add the contents of the generated \`config_part.yaml\` file to your \`configuration.yaml\` file in Home Assistant.
+   - To enable the automation of \`solarhtml2json.py\`, refer to the Home Assistant configuration to setup a shell command:
+     \```
+     shell_command:
+       convert_solar_data: python /config/solarhtml2json.py
+     \```
+   - Use the Home Assistant automation editor to trigger \`convert_solar_data\` shell command at your desired frequency.
 
-4. **Automation:** Create an automation that triggers the `solarhtml2json.py` script to fetch new data from the ECU-3. This can be done by copying the contents of `get_the_solar_data_automation.yaml` into your automation file or via the Home Assistant web interface under Automations. The example provided triggers the script every minute.
+4. **Handling Python Dependencies:**
+   - For scripts requiring external libraries like \`requests\`, use the Advanced Terminal & SSH add-on. This add-on provides a fully functional Python environment.
 
+5. **Deployment Notes:**
+   - Home Assistant Operating System (HAOS) versions come with pre-installed Python libraries compatible with the provided scripts.
+   - Store your scripts in the \`/config\` directory to ensure they have the correct execution context within HAOS.
 ## Usage
 
 Once everything is set up, the solar panel data from your APC ECU-3 device will be available as sensor entities in Home Assistant. You can use these in your automations, display them on your dashboard, or use them in any other way you find useful.
