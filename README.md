@@ -11,7 +11,7 @@ This custom component for Home Assistant fetches data from an APC ECU-3 device a
 ## Setup
 
 1. **Script Preparation:**
-   - Copy the \`solarhtml2json.py\` and \`generate_config.py\` files to your Home Assistant configuration directory. This can be efficiently done using the File Editor add-on. The configuration directory's default path is \`/config\`.
+   - Copy the \`solarhtml2json.py\` file to your Home Assistant configuration directory. This can be efficiently done using the File Editor add-on. The configuration directory's default path is \`/config\`.
 
 2. **Generate Configuration Using Local Python:**
    - Running \`populate-configuration.py\` requires Python and certain dependencies. Install Python locally on your PC. Then, install needed libraries by running \`pip install requests beautifulsoup4\`.
@@ -24,14 +24,9 @@ This custom component for Home Assistant fetches data from an APC ECU-3 device a
      shell_command:
        convert_solar_data: python /config/solarhtml2json.py
      \```
-   - Use the Home Assistant automation editor to trigger \`convert_solar_data\` shell command at your desired frequency.
+   - Use the Home Assistant automation editor to trigger \`convert_solar_data\` shell command at your desired frequency. I typically see my APC ECU-3 update only every 5 minutes. Your mileage may varry.
 
-4. **Handling Python Dependencies:**
-   - For scripts requiring external libraries like \`requests\`, use the Advanced Terminal & SSH add-on. This add-on provides a fully functional Python environment.
 
-5. **Deployment Notes:**
-   - Home Assistant Operating System (HAOS) versions come with pre-installed Python libraries compatible with the provided scripts.
-   - Store your scripts in the \`/config\` directory to ensure they have the correct execution context within HAOS.
 ## Usage
 
 Once everything is set up, the solar panel data from your APC ECU-3 device will be available as sensor entities in Home Assistant. You can use these in your automations, display them on your dashboard, or use them in any other way you find useful.
