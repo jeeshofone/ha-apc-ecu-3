@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <!-- 兼容IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- 支持国产浏览器高速模式 -->
+    <meta name="renderer" content="webkit">
+    <!-- 响应式布局 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">   
+
+    <title>Altenergy Power Control Software</title>
+    <link type="image/x-icon" href="http://192.168.1.10/resources/images/favicon.ico" rel="shortcut icon">    
+    <link href="http://192.168.1.10/resources/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://192.168.1.10/resources/css/ecu-style.css" rel="stylesheet">
+    <link href="http://192.168.1.10/resources/css/bootstrapValidator.css" rel="stylesheet">    
+    <!--[if lt IE 8]>
+      <link href="http://192.168.1.10/resources/css/bootstrap-ie7.css" rel="stylesheet">
+    <![endif]-->
+    
+    <script src="http://192.168.1.10/resources/js/jquery-1.8.2.min.js"></script>
+    <script src="http://192.168.1.10/resources/js/bootstrap.min.js"></script>
+    <script src="http://192.168.1.10/resources/js/bootstrapValidator.min.js"></script>    
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn"t work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+      <script src="js/respond.min.js"></script>
+    <![endif]-->    
+  </head>
+
+  <body>
+    <!-- 顶部导航栏 -->
+    <header>
+      <div class="navbar navbar-default navbar-top">
+        <div class="container">
+          <div class="navbar-header">
+            <button class="navbar-toggle" data-target="#navbar-header" data-toggle="collapse" type="button">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://www.altenergy-power.com">
+              <img src="http://192.168.1.10/resources/images/logo.png">
+            </a>
+          </div>
+          <div class="navbar-collapse collapse" id="navbar-header">
+            <ul class="nav navbar-nav navbar-title">
+              <li><a id="ecu_title">ENERGY COMMUNICATION UNIT</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <a class="btn chlang" id="english" >English</a>|
+              <a class="btn chlang" id="chinese" >Chinese</a>
+            </ul>
+          </div>
+        </div>
+      </div>     
+    </header><!-- 菜单导航栏 -->
+<nav>
+    <div class="navbar navbar-default navbar-menu">
+        <div class="container">
+                    <p class="navbar-menu-title">Real Time Data</p>     
+            <div class="navbar-header">            
+                <button class="navbar-toggle" data-target="#navbar-menu" data-toggle="collapse" type="button">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                                    </button>
+            </div>
+            
+            <div class="navbar-collapse collapse" id="navbar-menu">
+                <ul class="nav navbar-nav ">
+                    <li><a href="http://192.168.1.10/index.php/home">Home</a></li>
+                    <li><a href="http://192.168.1.10/index.php/realtimedata" class="active">Real Time Data</a><span> </span></li>                    
+                  <!-- 
+                    <li><a href="http://192.168.1.10/index.php/meter/meter_power_graph">Meter</a><span> </span></li>
+                  --> 
+                    <li><a href="http://192.168.1.10/index.php/management">Administration</a><span> </span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+        
+<section>
+    <div class="container container-main">
+        <!-- 侧边导航栏 -->
+        <aside class="col-md-3 col-md-push-9">
+            <div class="list-group">
+                  
+                              			   
+                   <a href="http://192.168.1.10/index.php/realtimedata" class="list-group-item active">Real Time Data</a>
+                  	   
+                  
+                              			   
+                   <a href="http://192.168.1.10/index.php/realtimedata/power_graph" class="list-group-item ">Power</a>
+                  	   
+                  
+                              			   
+                   <a href="http://192.168.1.10/index.php/realtimedata/energy_graph" class="list-group-item ">Energy</a>
+                  	   
+                                            </div>
+        </aside>
+        
+        <!-- 正文 -->
+        <article class="col-md-9 col-md-pull-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Real Time Data                                        <div class="btn-group pull-right visible-xs">
+                        <button type="button" class="btn btn-info btn-xs dropdown-toggle" data-toggle="dropdown">More <span class="caret"></span></button>
+                        <ul class="dropdown-menu" role="menu">
+                                   
+                                                                   <a href="http://192.168.1.10/index.php/realtimedata" class="list-group-item active">Real Time Data</a>
+                                
+                                   
+                                                                   <a href="http://192.168.1.10/index.php/realtimedata/power_graph" class="list-group-item ">Power</a>
+                                
+                                   
+                                                                   <a href="http://192.168.1.10/index.php/realtimedata/energy_graph" class="list-group-item ">Energy</a>
+                                
+                               
+                        </ul>
+                    </div>
+                                    </div>
+                                
+                <div class="panel-body"><div class="table-responsive">
+  <table class="table table-condensed table-bordered">
+    <thead>
+      <tr>
+        <th scope="col">Inverter ID</th>
+        <th scope="col">Current Power</th>
+        <th scope="col">Grid Frequency</th>
+        <th scope="col">Grid Voltage</th>
+        <th scope="col">Temperature</th>
+        <th scope="col">Reporting Time</th>
+      </tr>
+    </thead>
+    <tbody>
+        <div>
+            <tr class='active'>
+        <td>403000111111-A </td>
+        <td>- </td>
+        <td rowspan=2 style='vertical-align: middle;'>- </td>
+        <td>- </td>
+        <td rowspan=2 style='vertical-align: middle;'>- </td>
+        <td rowspan=2 style='vertical-align: middle;'> -
+ </td>
+      </tr>
+            <tr class='active'>
+        <td>403000111111-B </td>
+        <td>- </td>
+        <td>- </td>
+      </tr>
+          </div>
+        <div>
+            <tr >
+        <td>403000111111-A </td>
+        <td> 2 W </td>
+        <td rowspan=2 style='vertical-align: middle;'> 60.1 Hz </td>
+        <td> 233 V </td>
+        <td rowspan=2 style='vertical-align: middle;'> 27 &#176;C </td>
+        <td rowspan=2 style='vertical-align: middle;'> 2024-05-26 20:22:19
+ </td>
+      </tr>
+            <tr >
+        <td>403000111111-B </td>
+        <td> 0 W </td>
+        <td> 233 V </td>
+      </tr>
+          </div>
+        <div>
+            <tr class='active'>
+        <td>403000111111-A </td>
+        <td> 0 W </td>
+        <td rowspan=2 style='vertical-align: middle;'> 60.1 Hz </td>
+        <td> 235 V </td>
+        <td rowspan=2 style='vertical-align: middle;'> 25 &#176;C </td>
+        <td rowspan=2 style='vertical-align: middle;'> 2024-05-26 20:22:19
+ </td>
+      </tr>
+            <tr class='active'>
+        <td>403000111111-B </td>
+        <td> 0 W </td>
+        <td> 235 V </td>
+      </tr>
+          </div>
+        <div>
+            <tr >
+        <td>403000111111-A </td>
+        <td> 2 W </td>
+        <td rowspan=2 style='vertical-align: middle;'> 60.1 Hz </td>
+        <td> 233 V </td>
+        <td rowspan=2 style='vertical-align: middle;'> 27 &#176;C </td>
+        <td rowspan=2 style='vertical-align: middle;'> 2024-05-26 20:22:19
+ </td>
+      </tr>
+            <tr >
+        <td>403000111111-B </td>
+        <td> 1 W </td>
+        <td> 233 V </td>
+      </tr>
+          </div>
+        <div>
+            <tr class='active'>
+        <td>403000111111-A </td>
+        <td>- </td>
+        <td rowspan=2 style='vertical-align: middle;'>- </td>
+        <td>- </td>
+        <td rowspan=2 style='vertical-align: middle;'>- </td>
+        <td rowspan=2 style='vertical-align: middle;'> -
+ </td>
+      </tr>
+            <tr class='active'>
+        <td>403000111111-B </td>
+        <td>- </td>
+        <td>- </td>
+      </tr>
+          </div>
+        <div>
+            <tr >
+        <td>403000111111-A </td>
+        <td>- </td>
+        <td rowspan=2 style='vertical-align: middle;'>- </td>
+        <td>- </td>
+        <td rowspan=2 style='vertical-align: middle;'>- </td>
+        <td rowspan=2 style='vertical-align: middle;'> -
+ </td>
+      </tr>
+            <tr >
+        <td>403000111111-B </td>
+        <td>- </td>
+        <td>- </td>
+      </tr>
+          </div>
+        <div>
+            <tr class='active'>
+        <td>403000111111-A </td>
+        <td>- </td>
+        <td rowspan=2 style='vertical-align: middle;'>- </td>
+        <td>- </td>
+        <td rowspan=2 style='vertical-align: middle;'>- </td>
+        <td rowspan=2 style='vertical-align: middle;'> -
+ </td>
+      </tr>
+            <tr class='active'>
+        <td>403000111111-B </td>
+        <td>- </td>
+        <td>- </td>
+      </tr>
+          </div>
+        <div>
+            <tr >
+        <td>403000111111-A </td>
+        <td>- </td>
+        <td rowspan=2 style='vertical-align: middle;'>- </td>
+        <td>- </td>
+        <td rowspan=2 style='vertical-align: middle;'>- </td>
+        <td rowspan=2 style='vertical-align: middle;'> -
+ </td>
+      </tr>
+            <tr >
+        <td>403000111111-B </td>
+        <td>- </td>
+        <td>- </td>
+      </tr>
+          </div>
+        <div>
+            <tr class='active'>
+        <td>403000111111-A </td>
+        <td> 0 W </td>
+        <td rowspan=2 style='vertical-align: middle;'> 60.1 Hz </td>
+        <td> 235 V </td>
+        <td rowspan=2 style='vertical-align: middle;'> 17 &#176;C </td>
+        <td rowspan=2 style='vertical-align: middle;'> 2024-05-26 20:22:19
+ </td>
+      </tr>
+            <tr class='active'>
+        <td>403000111111-B </td>
+        <td> 0 W </td>
+        <td> 235 V </td>
+      </tr>
+          </div>
+        <div>
+            <tr >
+        <td>403000111111-A </td>
+        <td>- </td>
+        <td rowspan=2 style='vertical-align: middle;'>- </td>
+        <td>- </td>
+        <td rowspan=2 style='vertical-align: middle;'>- </td>
+        <td rowspan=2 style='vertical-align: middle;'> -
+ </td>
+      </tr>
+            <tr >
+        <td>403000111111-B </td>
+        <td>- </td>
+        <td>- </td>
+      </tr>
+          </div>
+        <div>
+            <tr class='active'>
+        <td>403000111111-A </td>
+        <td>- </td>
+        <td rowspan=2 style='vertical-align: middle;'>- </td>
+        <td>- </td>
+        <td rowspan=2 style='vertical-align: middle;'>- </td>
+        <td rowspan=2 style='vertical-align: middle;'> -
+ </td>
+      </tr>
+            <tr class='active'>
+        <td>403000111111-B </td>
+        <td>- </td>
+        <td>- </td>
+      </tr>
+          </div>
+        </tbody>
+  </table>
+</div>            </div>
+          </div>
+    	</article>
+      </div>
+    </section>
+    <footer class="footer">&copy; 2015 Altenergy Power System Inc.</footer>
+    <script>
+        /* 指定5分钟刷新一次 */
+        function myrefresh() {
+            window.location.reload();
+        }
+        setTimeout('myrefresh()',300000); 
+         	
+    /* 切换语言 */
+        $(".chlang").click(function(){
+            $.ajax({
+                url : "http://192.168.1.10/index.php/management/set_language",
+                type : "post",
+                dataType : "json",
+                data: "language=" + $(this).attr("id"),
+            })
+            setTimeout("location.reload();",500);//刷新页面
+        });
+    </script>
+    </body>
+</html>

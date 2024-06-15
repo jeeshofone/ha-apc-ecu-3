@@ -1,2 +1,6 @@
 
 config_part.yaml
+.DS_Store
+bin/
+lib/
+pyvenv.cfg
