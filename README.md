@@ -16,6 +16,7 @@ This custom component for Home Assistant fetches data from an APC ECU-3 device a
 2. **Generate Configuration Using Local Python:**
    - Running \`populate-configuration.py\` requires Python and certain dependencies. Install Python locally on your PC. Then, install needed libraries by running \`pip install requests beautifulsoup4\`.
    - Run \`populate-configuration.py\` locally after replacing \`IP-OF-ECU-3\` in the script with the actual IP of your APC ECU-3 device to generate a \`config_part.yaml\` file.
+   - If you are using a v4 ECU then you should use the path http://IP-OF-ECU-4/index.php/realtimedata instead of http://IP-OF-ECU-3/cgi-bin/parameters
 
 3. **Integration into Home Assistant:**
    - Add the contents of the generated \`config_part.yaml\` file to your \`configuration.yaml\` file in Home Assistant.
