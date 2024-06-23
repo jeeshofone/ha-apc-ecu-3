@@ -2,17 +2,22 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
 import json
+import os
 
-def get_power_data():
-    url = 'http://IP-OF-ECU-3/cgi-bin/parameters'
-    #url = 'http://IP-OF-ECU-4/index.php/realtimedata'
-    r = requests.get(url)
-    
-    if r.status_code != 200:
-        print('Error: ', r.status_code)
-        return
+def get_power_data(file_path=None, is_ecu_v4=False):
+    if file_path and os.path.exists(file_path):
+        with open(file_path, 'r') as f:
+            html_content = f.read()
+    else:
+        url = 'http://IP-OF-ECU-3/cgi-bin/parameters'
+        r = requests.get(url)
+        if r.status_code != 200:
+            print('Error: ', r.status_code)
+            return
+        
+        html_content = r.text
 
-    soup = BeautifulSoup(r.text, 'html.parser')
+    soup = BeautifulSoup(html_content, 'html.parser')
     table = soup.find('table')
     
     if table is None:
@@ -22,65 +27,68 @@ def get_power_data():
     rows = table.find_all('tr')
     power_data = {}
 
-    is_new_version = False
-    for row in rows:
-        columns = row.find_all('td')
-        if len(columns) == 6:
-            is_new_version = True
-            break
+    # Function to clean and convert value
+    def clean_value(value, replace_dict):
+        for key, replacement in replace_dict.items():
+            value = value.replace(key, replacement)
+        return '0' if value.strip() in ['', '-', '\xa0'] else value.strip()
 
-    if is_new_version:
-        inverter_id = None
+    if is_ecu_v4:
+        for i in range(1, len(rows) - 1, 2):  # Process two rows at a time, ensure even indexing.
+            row_a = rows[i]
+            row_b = rows[i + 1] if i + 1 < len(rows) else None
+            columns_a = row_a.find_all('td')
+            columns_b = row_b.find_all('td') if row_b else []
+
+            # Debug: Print rows being processed
+            print(f"Processing rows {i}, {i + 1}")
+            print(f"Row A columns: {len(columns_a)}, Row B columns: {len(columns_b) if columns_b else 'None'}")
+            
+            if len(columns_a) == 6 and len(columns_b) == 3:
+                base_id_a = columns_a[0].text.strip()
+                base_id_b = columns_b[0].text.strip()
+
+                common_grid_freq = clean_value(columns_a[2].text, {'Hz': ''})
+                common_temp = clean_value(columns_a[4].text, {'°C': ''})
+                common_report_time = columns_a[5].text.strip() if columns_a[5].text.strip() else datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                
+                power_data[base_id_a] = [clean_value(columns_a[1].text, {'W': ''}),  # power (A)
+                                         clean_value(columns_a[3].text, {'V': ''}),  # voltage (A)
+                                         common_grid_freq,  # grid frequency (shared)
+                                         common_temp,  # temperature (shared)
+                                         common_report_time]  # reporting time (shared)
+                
+                power_data[base_id_b] = [clean_value(columns_b[1].text, {'W': ''}),  # power (B)
+                                         clean_value(columns_b[2].text, {'V': ''}),  # voltage (B)
+                                         common_grid_freq,  # grid frequency (shared)
+                                         common_temp,  # temperature (shared)
+                                         common_report_time]  # reporting time (shared)
+
+                # Debug: Print debug information
+                print(f"Extracted values for {base_id_a}: {power_data[base_id_a]}")
+                print(f"Extracted values for {base_id_b}: {power_data[base_id_b]}")
+    else:
         for row in rows[1:]:  # Skip the header row
             columns = row.find_all('td')
             if len(columns) == 6:
-                inverter_id = columns[0].text.strip()
-                power_data[inverter_id] = [columns[i].text.replace('&#176;C', '').strip() for i in range(1, 6)]
-            else:
-                power_data[inverter_id][0] += f" / {columns[1].text.strip()}"
-                power_data[inverter_id][2] += f" / {columns[3].text.strip()}"
-    else:
-        for row in rows:
-            columns = row.find_all('td')
-            if len(columns) == 6:
-                data_list = [columns[i].text.replace('\xa0', ' ').replace('\xba', ' ').strip() for i in range(1, 6)]
-                power_data[columns[0].text.strip()] = data_list
-            else:
-                print('Not a power data row')
+                base_id = columns[0].text.strip()
+                power_data[base_id] = [clean_value(columns[1].text, {'W': ''}),
+                                       clean_value(columns[2].text, {'Hz': ''}),
+                                       clean_value(columns[3].text, {'V': ''}),
+                                       clean_value(columns[4].text, {'°C': ''}),
+                                       columns[5].text.strip()]
 
-    # Clean the data
-    latest_time = '0'
-    for pannel in power_data:
-        if pannel != 'Inverter ID':  # skip the row of headers
-            # Remove units from the data
-            if is_new_version:
-                power_data[pannel][0] = power_data[pannel][0].replace('W', '').replace('/', '').strip()
-                power_data[pannel][1] = power_data[pannel][1].replace('Hz', '').strip()
-                power_data[pannel][2] = power_data[pannel][2].replace('V', '').replace('/', '').strip()
-                power_data[pannel][3] = power_data[pannel][3].replace('°C', '').strip()
-            else:
-                power_data[pannel][0] = power_data[pannel][0].replace('W', '').strip()
-                power_data[pannel][1] = power_data[pannel][1].replace('Hz', '').strip()
-                power_data[pannel][2] = power_data[pannel][2].replace('V', '').strip()
-                power_data[pannel][3] = power_data[pannel][3].replace('oC', '').strip()
-
-            # Panels go offline at night and return empty values. Mark these as 0
-            # instead to prevent the HA sensor from disappearing.
-            power_data[pannel] = ['0' if d.strip() in ['', '-'] else d.strip() for d in power_data[pannel]]
-
-            # Note the latest timestamp found so we can fill it in for missing
-            # panels.
-            latest_time = max(latest_time, power_data[pannel][4])
-
-    # For missing panels (offline over night etc) fill in the latest timestamp
-    # found. If all are offline, fill in the current time.
-    if latest_time == '0':
-        latest_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    for pannel in power_data:
-        if power_data[pannel][4] == '0':
-            power_data[pannel][4] = latest_time
+    # For missing panels (offline overnight, etc.) fill in the latest timestamp found.
+    latest_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    for panel in power_data:
+        if len(power_data[panel]) >= 5 and (not power_data[panel][4] or power_data[panel][4] == '-'):
+            power_data[panel][4] = latest_time
 
     with open('www/power_data.json', 'w') as outfile:
-        json.dump(power_data, outfile)
+        json.dump(power_data, outfile, indent=4)
 
-get_power_data()
+    print("Final power data:", json.dumps(power_data, indent=4))
+
+# Example usage
+#get_power_data(file_path='html-examples/ECU-v3.10.5.html', is_ecu_v4=False)
+get_power_data(file_path='html-examples/ECU-v4.html', is_ecu_v4=True)
