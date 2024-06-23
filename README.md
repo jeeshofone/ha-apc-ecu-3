@@ -1,40 +1,114 @@
 # Home Assistant APC ECU-3 Data Reader
 
-This custom component for Home Assistant fetches data from an APC ECU-3 device and integrates it into your Home Assistant instance. It's currently a work in progress, but functional. You can find more information in this blog post: https://www.123cloud.st/p/the-unexpectedly-direct-path-to-building
+This custom component for Home Assistant fetches data from an APC ECU-3 or ECU-4 device and integrates it into your Home Assistant instance. It's currently a work in progress, but functional. You can find more information in this [blog post](https://www.123cloud.st/p/the-unexpectedly-direct-path-to-building).
 
 ## Requirements
 
-- An APC ECU-3 device connected to your network.
-- The IP address of your APC ECU-3 device.
+- An APC ECU-3 or ECU-4 device connected to your network.
+- The IP address of your APC ECU-3 or ECU-4 device.
 - Home Assistant installation.
 
 ## Setup
 
-1. **Script Preparation:**
-   - Copy the \`solarhtml2json.py\` file to your Home Assistant configuration directory. This can be efficiently done using the File Editor add-on. The configuration directory's default path is \`/config\`.
+### Creating a Virtual Python Environment
 
-2. **Generate Configuration Using Local Python:**
-   - Running \`populate-configuration.py\` requires Python and certain dependencies. Install Python locally on your PC. Then, install needed libraries by running \`pip install requests beautifulsoup4\`.
-   - Run \`populate-configuration.py\` locally after replacing \`IP-OF-ECU-3\` in the script with the actual IP of your APC ECU-3 device to generate a \`config_part.yaml\` file.
-   - If you are using a v4 ECU then you should use the path http://IP-OF-ECU-4/index.php/realtimedata instead of http://IP-OF-ECU-3/cgi-bin/parameters
+1. **Install `virtualenv`**:
+   ```bash
+   pip install virtualenv
+   ```
 
-3. **Integration into Home Assistant:**
-   - Add the contents of the generated \`config_part.yaml\` file to your \`configuration.yaml\` file in Home Assistant.
-   - To enable the automation of \`solarhtml2json.py\`, refer to the Home Assistant configuration to setup a shell command:
-     \```
-     shell_command:
-       convert_solar_data: python /config/solarhtml2json.py
-     \```
-   - Use the Home Assistant automation editor to trigger \`convert_solar_data\` shell command at your desired frequency. I typically see my APC ECU-3 update only every 5 minutes. Your mileage may varry.
+2. **Create a new virtual environment**:
+   ```bash
+   virtualenv venv
+   ```
 
+3. **Activate the virtual environment**:
+   - On Windows:
+     ```bash
+     .\venv\Scripts\activate
+     ```
+   - On Unix or MacOS:
+     ```bash
+     source venv/bin/activate
+     ```
+
+4. **Install necessary dependencies**:
+   Create a `requirements.txt` file with the following content:
+   ```
+   requests
+   beautifulsoup4
+   ```
+
+   Then install the dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+### Script Preparation
+
+- Copy the `solarhtml2json.py` file to your Home Assistant configuration directory. This can be efficiently done using the File Editor add-on. The configuration directory’s default path is `/config`.
+
+### Fetch and Save Power Data
+
+- **From a Local HTML File**:
+  ```bash
+  python /config/solarhtml2json.py --file path/to/your/file.html --ecu_v4  # for ECU v4
+  python /config/solarhtml2json.py --file path/to/your/file.html  # for older versions (ECU-3)
+  ```
+
+- **From a URL**:
+  ```bash
+  python /config/solarhtml2json.py --url http://IP-OF-YOUR-DEVICE --ecu_v4  # for ECU v4
+  python /config/solarhtml2json.py --url http://IP-OF-YOUR-DEVICE  # for older versions (ECU-3)
+  ```
+
+### Generate Home Assistant Configuration
+
+- After fetching the power data, generate the Home Assistant configuration part file:
+  ```bash
+  python /config/solarhtml2json.py --generate_config
+  ```
+
+- Add the contents of the generated `config_part.yaml` file to your `configuration.yaml` file in Home Assistant.
+
+### Integration into Home Assistant
+
+- Add a shell command in Home Assistant to automate data fetching:
+
+  - **For ECU V4**:
+    ```yaml
+    shell_command:
+      convert_solar_data: python /config/solarhtml2json.py --url http://IP-OF-YOUR-DEVICE --ecu_v4
+    ```
+
+  - **For ECU V3**:
+    ```yaml
+    shell_command:
+      convert_solar_data: python /config/solarhtml2json.py --url http://IP-OF-YOUR-DEVICE
+    ```
+
+- Create an automation to run the fetch command at your preferred frequency:
+  ```yaml
+  automation:
+    - alias: get the solar data
+      description: ""
+      trigger:
+        - platform: time_pattern
+          minutes: "*"
+          seconds: "0"
+          hours: "*"
+      condition: []
+      action:
+        - service: shell_command.convert_solar_data
+          data: {}
+      mode: single
+  ```
 
 ## Usage
 
-Once everything is set up, the solar panel data from your APC ECU-3 device will be available as sensor entities in Home Assistant. You can use these in your automations, display them on your dashboard, or use them in any other way you find useful.
+Once everything is set up, you will have the solar panel data from your APC ECU device available as sensor entities in Home Assistant. You can use these entities in your automations, dashboards, or any other feature within Home Assistant.
 
-The sensor names are based on the inverter IDs and are automatically generated by the `generate_config.py` script.
-
-Each sensor's state is the current power output of the respective solar panel in Watts.
+The sensor names are based on the inverter IDs and are automatically generated by the script.
 
 ## Support and Contribution
 
@@ -42,20 +116,12 @@ This project is still under development, and your contributions are very welcome
 
 ## TODO and Potential Improvements
 
-1. **Error Handling:** Improve error handling in the scripts. Currently, the scripts assume that the web request will always succeed and that the page structure will always be as expected. More robust error handling would make the scripts more reliable and easier to debug.
-
-2. **Script Efficiency:** Optimize the scripts for better performance, especially if the number of inverters or the frequency of updates increases.
-
-3. **Automated Setup:** Create an installation script that automates the setup process, such as placing the scripts in the correct location, generating the configuration, and setting up the automation in Home Assistant.
-
-4. **User Interface:** Develop a custom integration with a user interface for Home Assistant. This would allow users to set up and configure the integration without editing configuration files or running scripts manually.
-
-5. **Data Validation:** Add checks to validate the data before it is used. This could include checking for unreasonable values (e.g., negative power output) or missing values.
-
-6. **Expand Sensor Data:** Currently, the scripts only extract the power output of each inverter. There may be other useful data available from the APC ECU-3 device that could also be made available in Home Assistant.
-
-7. **Logging:** Implement a logging system to keep track of when data is fetched, when errors occur, and other significant events.
-
-8. **Unit Tests:** Write unit tests for the scripts to ensure they work as expected and make future development easier and safer.
-
-9. **Documentation:** Improve documentation, including more detailed setup instructions, explanations of how the scripts work, and examples of how to use the sensor data in Home Assistant.
+1. **Error Handling:** Improve error handling in the scripts.
+2. **Script Efficiency:** Optimize the scripts for better performance.
+3. **Automated Setup:** Create an installation script that automates the setup process.
+4. **User Interface:** Develop a custom integration with a user interface for Home Assistant.
+5. **Data Validation:** Add checks to validate the data before it is used.
+6. **Expand Sensor Data:** Extract additional useful data available from the APC ECU-3 or ECU-4 device.
+7. **Logging:** Implement a logging system.
+8. **Unit Tests:** Write unit tests for the scripts.
+9. **Documentation:** Improve documentation with detailed setup instructions, explanations, and examples.

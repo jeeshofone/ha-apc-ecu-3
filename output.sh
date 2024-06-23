@@ -1,8 +1,8 @@
 #!/bin/bash
 
 EXCLUDE_FILES=("configuration.yaml")
-INCLUDE_EXTENSIONS=("*.py" "*.yaml" "*.md" "*.html")
-DIRECTORIES=("." "./html-examples/")
+INCLUDE_EXTENSIONS=("*.py" "*.yaml" "*.md" "*.html" ".txt" "*.json")
+DIRECTORIES=("." "./html-examples/" "./www/")
 
 wrap_content() {
     local filepath="$1"
