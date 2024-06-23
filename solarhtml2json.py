@@ -94,17 +94,22 @@ def generate_yaml_from_json():
         panel_name = id.split('-')[0]
         suffix = id.split('-')[1]
         panel_names.add(f'solar_panel_{panel_name.lower()}_{suffix.lower()}')
+        unique_id_base = f"solar_panel_{panel_name.lower()}_{suffix.lower()}_"
         config += (
             f'      - name: "Solar Panel {panel_name} {suffix} power"\n'
+            f'        unique_id: "{unique_id_base}power"\n'
             f'        value_template: \'{{{{ value_json["{id}"][0] }}}}\'\n'
             f'        unit_of_measurement: "W"\n'
             f'      - name: "Solar Panel {panel_name} {suffix} grid frequency"\n'
+            f'        unique_id: "{unique_id_base}grid_frequency"\n'
             f'        value_template: \'{{{{ value_json["{id}"][1] }}}}\'\n'
             f'        unit_of_measurement: "Hz"\n'
             f'      - name: "Solar Panel {panel_name} {suffix} grid voltage"\n'
+            f'        unique_id: "{unique_id_base}grid_voltage"\n'
             f'        value_template: \'{{{{ value_json["{id}"][2] }}}}\'\n'
             f'        unit_of_measurement: "V"\n'
             f'      - name: "Solar Panel {panel_name} {suffix} temperature"\n'
+            f'        unique_id: "{unique_id_base}temperature"\n'
             f'        value_template: \'{{{{ value_json["{id}"][3] }}}}\'\n'
             f'        unit_of_measurement: "°C"\n'
         )
