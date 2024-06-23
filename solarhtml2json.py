@@ -4,11 +4,15 @@ from datetime import datetime
 import json
 import os
 import argparse
+import re
 
-def clean_value(value, replace_dict):
+def clean_value(value, replace_dict, is_temperature=False):
     for key, replacement in replace_dict.items():
         value = value.replace(key, replacement)
-    return '0' if value.strip() in ['', '-', '�'] else value.strip()
+    cleaned_value = value.strip()
+    if is_temperature:
+        cleaned_value = re.sub(r'[^\d.]+', '', cleaned_value)  # Remove everything except digits and dot
+    return '0' if cleaned_value in ['', '-', '�'] else cleaned_value
 
 def get_html_content(file_path, url):
     if file_path and os.path.exists(file_path):
@@ -47,7 +51,7 @@ def parse_table(html_content, is_ecu_v4):
                 base_id_b = columns_b[0].text.strip()
 
                 common_grid_freq = clean_value(columns_a[2].text, {'Hz': ''})
-                common_temp = clean_value(columns_a[4].text, {'°C': ''})
+                common_temp = clean_value(columns_a[4].text, {'°C': ''}, is_temperature=True)
                 common_report_time = columns_a[5].text.strip() if columns_a[5].text.strip() else latest_time
                 
                 power_data[base_id_a] = [clean_value(columns_a[1].text, {'W': ''}),
@@ -69,7 +73,7 @@ def parse_table(html_content, is_ecu_v4):
                 power_data[base_id] = [clean_value(columns[1].text, {'W': ''}),
                                        clean_value(columns[2].text, {'Hz': ''}),
                                        clean_value(columns[3].text, {'V': ''}),
-                                       clean_value(columns[4].text, {'°C': ''}),
+                                       clean_value(columns[4].text, {'°C': ''}, is_temperature=True),
                                        columns[5].text.strip() if columns[5].text.strip() else latest_time]
 
     return power_data

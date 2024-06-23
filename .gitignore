@@ -5,3 +5,4 @@ bin/
 lib/
 pyvenv.cfg
 output.cat
+backups/rndconfig
