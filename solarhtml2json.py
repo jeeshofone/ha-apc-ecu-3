@@ -84,28 +84,49 @@ def generate_yaml_from_json():
 
     inverter_ids = power_data.keys()
 
+    config = 'rest:\n'
+    config += '  - resource: http://homeassistant.local:8123/local/power_data.json\n'
+    config += '    sensor:\n'
+    
+    panel_names = set()
+    
+    for id in inverter_ids:
+        panel_name = id.split('-')[0]
+        suffix = id.split('-')[1]
+        panel_names.add(f'solar_panel_{panel_name.lower()}_{suffix.lower()}')
+        config += (
+            f'      - name: "Solar Panel {panel_name} {suffix} power"\n'
+            f'        value_template: \'{{{{ value_json["{id}"][0] }}}}\'\n'
+            f'        unit_of_measurement: "W"\n'
+            f'      - name: "Solar Panel {panel_name} {suffix} grid frequency"\n'
+            f'        value_template: \'{{{{ value_json["{id}"][1] }}}}\'\n'
+            f'        unit_of_measurement: "Hz"\n'
+            f'      - name: "Solar Panel {panel_name} {suffix} grid voltage"\n'
+            f'        value_template: \'{{{{ value_json["{id}"][2] }}}}\'\n'
+            f'        unit_of_measurement: "V"\n'
+            f'      - name: "Solar Panel {panel_name} {suffix} temperature"\n'
+            f'        value_template: \'{{{{ value_json["{id}"][3] }}}}\'\n'
+            f'        unit_of_measurement: "°C"\n'
+        )
+    
+    config += '\nsensor:\n'
+    config += '  - platform: template\n'
+    config += '    sensors:\n'
+    config += '      solar_panels_total_power:\n'
+    config += '        unique_id: "total_solar_power"\n'
+    config += '        friendly_name: "Total Solar Power"\n'
+    config += '        unit_of_measurement: "W"\n'
+    
+    panels_sum = ' +\n             '.join([f"states('sensor.{name}_power')|float(default=0)" for name in panel_names])
+    config += (
+        '        value_template: >\n'
+        '          {{ (\n'
+        f'             {panels_sum}\n'
+        '          ) }}\n'
+    )
+    
     with open('config_part.yaml', 'w') as f:
-        f.write('rest:\n')
-        f.write('  - resource: http://homeassistant.local:8123/local/power_data.json\n')
-        f.write('    sensor:\n')
-        
-        for id in inverter_ids:
-            panel_name = id.split('-')[0]
-            suffix = id.split('-')[1]
-            f.write(
-                f'      - name: "Solar Panel {panel_name} {suffix} power"\n'
-                f'        value_template: \'{{{{ value_json["{id}"][0] }}}}\'\n'
-                f'        unit_of_measurement: "W"\n'
-                f'      - name: "Solar Panel {panel_name} {suffix} grid frequency"\n'
-                f'        value_template: \'{{{{ value_json["{id}"][1] }}}}\'\n'
-                f'        unit_of_measurement: "Hz"\n'
-                f'      - name: "Solar Panel {panel_name} {suffix} grid voltage"\n'
-                f'        value_template: \'{{{{ value_json["{id}"][2] }}}}\'\n'
-                f'        unit_of_measurement: "V"\n'
-                f'      - name: "Solar Panel {panel_name} {suffix} temperature"\n'
-                f'        value_template: \'{{{{ value_json["{id}"][3] }}}}\'\n'
-                f'        unit_of_measurement: "°C"\n'
-            )
+        f.write(config)
 
 def main():
     parser = argparse.ArgumentParser(description='Process and collect solar data.')
