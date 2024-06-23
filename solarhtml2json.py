@@ -83,36 +83,29 @@ def generate_yaml_from_json():
         power_data = json.load(f)
 
     inverter_ids = power_data.keys()
-    unique_ids = set(inverter_ids)
 
     with open('config_part.yaml', 'w') as f:
         f.write('rest:\n')
         f.write('  - resource: http://homeassistant.local:8123/local/power_data.json\n')
         f.write('    sensor:\n')
         
-        for id in unique_ids:
+        for id in inverter_ids:
             panel_name = id.split('-')[0]
-            for suffix in ['A', 'B']:
-                full_id = f"{panel_name}-{suffix}"
-                if full_id in inverter_ids:
-                    f.write(
-                        f'      - name: "Solar Panel {panel_name} {suffix} power"\n'
-                        f'        value_template: \'{{{{ value_json["{full_id}"][0] }}}}\n'
-                        f'        unit_of_measurement: "W"\n'
-                        f'\n'
-                        f'      - name: "Solar Panel {panel_name} {suffix} grid frequency"\n'
-                        f'        value_template: \'{{{{ value_json["{full_id}"][1] }}}}\n'
-                        f'        unit_of_measurement: "Hz"\n'
-                        f'\n'
-                        f'      - name: "Solar Panel {panel_name} {suffix} grid voltage"\n'
-                        f'        value_template: \'{{{{ value_json["{full_id}"][2] }}}}\n'
-                        f'        unit_of_measurement: "V"\n'
-                        f'\n'
-                        f'      - name: "Solar Panel {panel_name} {suffix} temperature"\n'
-                        f'        value_template: \'{{{{ value_json["{full_id}"][3] }}}}\n'
-                        f'        unit_of_measurement: "°C"\n'
-                        f'\n'
-                    )
+            suffix = id.split('-')[1]
+            f.write(
+                f'      - name: "Solar Panel {panel_name} {suffix} power"\n'
+                f'        value_template: \'{{{{ value_json["{id}"][0] }}}}\'\n'
+                f'        unit_of_measurement: "W"\n'
+                f'      - name: "Solar Panel {panel_name} {suffix} grid frequency"\n'
+                f'        value_template: \'{{{{ value_json["{id}"][1] }}}}\'\n'
+                f'        unit_of_measurement: "Hz"\n'
+                f'      - name: "Solar Panel {panel_name} {suffix} grid voltage"\n'
+                f'        value_template: \'{{{{ value_json["{id}"][2] }}}}\'\n'
+                f'        unit_of_measurement: "V"\n'
+                f'      - name: "Solar Panel {panel_name} {suffix} temperature"\n'
+                f'        value_template: \'{{{{ value_json["{id}"][3] }}}}\'\n'
+                f'        unit_of_measurement: "°C"\n'
+            )
 
 def main():
     parser = argparse.ArgumentParser(description='Process and collect solar data.')

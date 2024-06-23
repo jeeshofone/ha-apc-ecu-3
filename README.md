@@ -58,8 +58,8 @@ This custom component for Home Assistant fetches data from an APC ECU-3 or ECU-4
 
 - **From a URL**:
   ```bash
-  python /config/solarhtml2json.py --url http://IP-OF-YOUR-DEVICE --ecu_v4  # for ECU v4
-  python /config/solarhtml2json.py --url http://IP-OF-YOUR-DEVICE  # for older versions (ECU-3)
+  python /config/solarhtml2json.py --url http://IP-OF-YOUR-DEVICE/index.php/realtimedata --ecu_v4  # for ECU v4
+  python /config/solarhtml2json.py --url http://IP-OF-YOUR-DEVICE/cgi-bin/parameters  # for older versions (ECU-3)
   ```
 
 ### Generate Home Assistant Configuration
@@ -78,13 +78,13 @@ This custom component for Home Assistant fetches data from an APC ECU-3 or ECU-4
   - **For ECU V4**:
     ```yaml
     shell_command:
-      convert_solar_data: python /config/solarhtml2json.py --url http://IP-OF-YOUR-DEVICE --ecu_v4
+      convert_solar_data: python /config/solarhtml2json.py --url http://IP-OF-YOUR-DEVICE/index.php/realtimedata --ecu_v4
     ```
 
   - **For ECU V3**:
     ```yaml
     shell_command:
-      convert_solar_data: python /config/solarhtml2json.py --url http://IP-OF-YOUR-DEVICE
+      convert_solar_data: python /config/solarhtml2json.py --url http://IP-OF-YOUR-DEVICE/cgi-bin/parameters
     ```
 
 - Create an automation to run the fetch command at your preferred frequency:
