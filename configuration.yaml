@@ -1,5 +1,6 @@
 shell_command:
-  convert_solar_data: python solarhtml2json.py
+  convert_solar_data: python /config/solarhtml2json.py --url http://IP-OF-YOUR-DEVICE/PathToPage --ecu_v4  # See the README.md for more information
+  
 
 sensor:
   - platform: rest
