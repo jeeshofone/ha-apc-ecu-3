@@ -53,18 +53,24 @@ def parse_table(html_content, is_ecu_v4):
                 common_grid_freq = clean_value(columns_a[2].text, {'Hz': ''})
                 common_temp = clean_value(columns_a[4].text, {'°C': ''}, is_temperature=True)
                 common_report_time = columns_a[5].text.strip() if columns_a[5].text.strip() else latest_time
-                
-                power_data[base_id_a] = [clean_value(columns_a[1].text, {'W': ''}),
-                                         clean_value(columns_a[3].text, {'V': ''}),
-                                         common_grid_freq,
-                                         common_temp,
-                                         common_report_time]
-                
-                power_data[base_id_b] = [clean_value(columns_b[1].text, {'W': ''}),
-                                         clean_value(columns_b[2].text, {'V': ''}),
-                                         common_grid_freq,
-                                         common_temp,
-                                         common_report_time]
+
+                # For v4, store in same order as v3:
+                # [power, frequency, voltage, temp, time]
+                power_data[base_id_a] = [
+                    clean_value(columns_a[1].text, {'W': ''}),  # power
+                    common_grid_freq,                           # frequency
+                    clean_value(columns_a[3].text, {'V': ''}),  # voltage
+                    common_temp,                                # temperature
+                    common_report_time                          # time
+                ]
+
+                power_data[base_id_b] = [
+                    clean_value(columns_b[1].text, {'W': ''}),  # power
+                    common_grid_freq,                           # frequency
+                    clean_value(columns_b[2].text, {'V': ''}),  # voltage
+                    common_temp,                                # temperature
+                    common_report_time                          # time
+                ]
     else:
         for row in rows[1:]:
             columns = row.find_all('td')
